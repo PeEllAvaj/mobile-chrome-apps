@@ -10,6 +10,10 @@ Stable on Android; not supported on iOS.
 
 The API reference is [here](http://developer.chrome.com/apps/notifications.html).
 
+Keep in mind that the following [Notification Options](https://developer.chrome.com/apps/notifications#type-NotificationOptions) are not optional on mobileA
+- type
+- iconUrl
+
 # Release Notes
 ## 1.0.3 (April 1, 2014)
 - Expand basic notification when message text overflows.
