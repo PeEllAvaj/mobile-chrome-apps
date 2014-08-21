@@ -25,6 +25,8 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.NotificationManagerCompat;
+import android.support.v4.app.NotificationCompat.WearableExtender;
 import android.support.v4.content.IntentCompat;
 import android.text.Html;
 import android.util.Log;
@@ -212,6 +214,9 @@ public class ChromeNotifications extends CordovaPlugin {
             .setPriority(options.optInt("priority"))
             .setContentIntent(makePendingIntent(NOTIFICATION_CLICKED_ACTION, notificationId, -1, PendingIntent.FLAG_CANCEL_CURRENT))
             .setDeleteIntent(makePendingIntent(NOTIFICATION_CLOSED_ACTION, notificationId, -1, PendingIntent.FLAG_CANCEL_CURRENT));
+        
+
+
         double eventTime = options.optDouble("eventTime");
         if (eventTime != 0) {
             builder.setWhen(Math.round(eventTime));
@@ -247,6 +252,26 @@ public class ChromeNotifications extends CordovaPlugin {
         } else {
             NotificationCompat.BigTextStyle bigTextStyle = new NotificationCompat.BigTextStyle(builder);
             bigTextStyle.bigText(options.getString("message"));
+            
+            if(options.has("pageTwo")) {
+	        	// Create a big text style for the second page
+				NotificationCompat.BigTextStyle secondPageStyle = new NotificationCompat.BigTextStyle();
+				secondPageStyle.setBigContentTitle("Page 2")
+				               .bigText(options.getString("pageTwo"));
+
+	           	// Create second page notification
+				Notification secondPageNotification =
+				        new NotificationCompat.Builder(cordova.getActivity())
+				        .setStyle(secondPageStyle)
+				        .build();
+
+				// Add second page with wearable extender and extend the main notification
+				notification =
+				        new WearableExtender()
+				                .addPage(secondPageNotification)
+				                .extend(builder)
+				                .build();
+	        }
             notification = bigTextStyle.build();
         }
         notificationManager.notify(notificationId.hashCode(), notification);
